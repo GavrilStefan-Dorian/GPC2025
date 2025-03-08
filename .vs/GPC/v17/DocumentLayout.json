@@ -1,0 +1,53 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "E:\\VS2022_Projects\\source\\repos\\GPC\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{05B19DE8-179C-4776-B849-C4EDD586894D}|GPC.vcxproj|E:\\VS2022_Projects\\source\\repos\\GPC\\cg1.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{05B19DE8-179C-4776-B849-C4EDD586894D}|GPC.vcxproj|solutionrelative:cg1.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{05B19DE8-179C-4776-B849-C4EDD586894D}|GPC.vcxproj|E:\\VS2022_Projects\\source\\repos\\GPC\\sg1.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{05B19DE8-179C-4776-B849-C4EDD586894D}|GPC.vcxproj|solutionrelative:sg1.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "sg1.cpp",
+              "DocumentMoniker": "E:\\VS2022_Projects\\source\\repos\\GPC\\sg1.cpp",
+              "RelativeDocumentMoniker": "sg1.cpp",
+              "ToolTip": "E:\\VS2022_Projects\\source\\repos\\GPC\\sg1.cpp",
+              "RelativeToolTip": "sg1.cpp",
+              "ViewState": "AgIAAIQAAAAAAAAAAAAAAJIAAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-03-06T19:24:59.583Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "cg1.cpp",
+              "DocumentMoniker": "E:\\VS2022_Projects\\source\\repos\\GPC\\cg1.cpp",
+              "RelativeDocumentMoniker": "cg1.cpp",
+              "ToolTip": "E:\\VS2022_Projects\\source\\repos\\GPC\\cg1.cpp",
+              "RelativeToolTip": "cg1.cpp",
+              "ViewState": "AgIAAEUCAAAAAAAAAAAIwFgCAAAdAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-03-05T20:44:00.165Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+﻿  sg1.cpp
+E:\VS2022_Projects\source\repos\GPC\sg1.cpp(84,23): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+E:\VS2022_Projects\source\repos\GPC\sg1.cpp(84,18): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+E:\VS2022_Projects\source\repos\GPC\sg1.cpp(120,23): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+E:\VS2022_Projects\source\repos\GPC\sg1.cpp(120,18): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+E:\VS2022_Projects\source\repos\GPC\sg1.cpp(145,23): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+E:\VS2022_Projects\source\repos\GPC\sg1.cpp(145,18): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+  GPC.vcxproj -> E:\VS2022_Projects\source\repos\GPC\x64\Debug\GPC.exe
