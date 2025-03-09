@@ -1,4 +1,4 @@
-/*
+﻿/*
   This program plots different 2D functions.
 */
 
@@ -12,7 +12,7 @@
 #include <vector>
 using namespace std::complex_literals;
 
-#include "glut.h" //MSVC local library install
+#include "glut.h"
 //#include <GL/glut.h> //system-wide install (or compiler default path)
 
 double circle = atan(1) * 8;
@@ -171,7 +171,7 @@ void drawSquare(Turtle t, float distance) {
     */
 
     // !!!!!!! added for easier centering
-    t.rotate(pi +  pi / 4);
+    t.rotate(pi + pi / 4);
     t.move(sqrt(2 * distance * distance) / 2);
     t.rotate(-(pi + pi / 4));
     // !!!!!!! additions end here
@@ -207,7 +207,7 @@ void fractalKochCurve(Turtle t, float distance, int recursionsLeft = 1) {
         fractalKochCurve(t, distance, recursionsLeft);
         t.move(distance);
 
-        //Turn left: '_/\_'
+        //Turn left: '/\'
         t.rotate(pi / 3);
         fractalKochCurve(t, distance, recursionsLeft);
         //t.move(distance);
@@ -285,14 +285,14 @@ void drawCarpetFractal(Turtle t, float distance, int recursionsLeft = 1) {
             }
             turtles[i].rotate(-angle * i);
         }
-		
+
         for (int i = 0; i < turtles.size(); ++i) {
             drawCarpetFractal(turtles[i], distance / 3, recursionsLeft);
-    
+
         }
     }
     else {
-		drawSquare(t, distance);
+        drawSquare(t, distance);
     }
 }
 void Display2() {
@@ -311,15 +311,161 @@ void Display3() {
     // !!!!! CHANGES MADE HERE
     Turtle t(0, 0);
     drawSquare(t, 1.85);
-	drawCarpetFractal(t, 0.615, g_recursionCurrent);
+    drawCarpetFractal(t, 0.615, g_recursionCurrent);
 }
 
 
-void Display4() {
-    //Draw the triangle-like hex line fractal here.
-    glColor3f(1, 0, 0);
-    drawRecursionLevel();
+void hexLineFractal(Turtle t, float distance, int recursionsLeft = 1) {
 
+    if (recursionsLeft > 0) {
+        --recursionsLeft;
+        distance = distance / 2;
+
+        if (g_recursionCurrent % 2 == 1) {
+            t.draw(distance);
+
+            t.rotate(pi / 3);
+            hexLineFractal(t, distance, recursionsLeft);
+            t.draw(distance);
+
+            t.rotate(-pi / 3);
+            hexLineFractal(t, distance, recursionsLeft);
+            t.draw(distance);
+
+            t.rotate(-pi / 3);
+            hexLineFractal(t, distance, recursionsLeft);
+            t.draw(distance);
+
+            t.rotate(pi / 3);
+            hexLineFractal(t, distance, recursionsLeft);
+        }
+        else {
+            t.draw(distance);
+
+            t.rotate(pi / 3);
+            hexLineFractal(t, distance, recursionsLeft);
+            t.draw(distance);
+
+            t.rotate(pi / 3);
+            hexLineFractal(t, distance, recursionsLeft);
+            t.draw(distance);
+
+            t.rotate(-pi / 3);
+            hexLineFractal(t, distance, recursionsLeft);
+            t.draw(distance);
+
+            t.rotate(-pi / 3);
+            hexLineFractal(t, distance, recursionsLeft);
+            t.draw(distance);
+
+            t.rotate(-pi / 3);
+            hexLineFractal(t, distance, recursionsLeft);
+            t.draw(distance);
+
+            t.rotate(-pi / 3);
+            hexLineFractal(t, distance, recursionsLeft);
+            t.draw(distance);
+
+            t.rotate(pi / 3);
+            hexLineFractal(t, distance, recursionsLeft);
+            t.draw(distance);
+
+            t.rotate(pi / 3);
+            hexLineFractal(t, distance, recursionsLeft);
+            t.draw(distance);
+        }
+
+    }
+    else
+        t.draw(distance);
+
+}
+
+//void sierpinskiArrowhead(Turtle& t, float distance, int recursionsLeft, bool turnLeft = true) {
+//    if (recursionsLeft > 0) {
+//        --recursionsLeft;
+//        distance /= 2;
+//
+//        // Dacă trebuie să virăm la stânga, folosim +60° și -60°
+//        if (turnLeft) {
+//            sierpinskiArrowhead(t, distance, recursionsLeft, true);
+//            t.rotate(pi / 3);  // Rotim la stânga 60°
+//            sierpinskiArrowhead(t, distance, recursionsLeft, false);
+//            t.rotate(pi / 3);  // Rotim la stânga 60°
+//            sierpinskiArrowhead(t, distance, recursionsLeft, true);
+//        }
+//        // Dacă trebuie să virăm la dreapta, folosim -60° și +60°
+//        else {
+//            sierpinskiArrowhead(t, distance, recursionsLeft, false);
+//            t.rotate(-pi / 3);  // Rotim la dreapta -60°
+//            sierpinskiArrowhead(t, distance, recursionsLeft, true);
+//            t.rotate(-pi / 3);  // Rotim la dreapta -60°
+//            sierpinskiArrowhead(t, distance, recursionsLeft, false);
+//        }
+//    }
+//    else {
+//        t.draw(distance);
+//    }
+//}
+
+
+/*
+void sierpinskiArrowhead(Turtle& t, float distance, int recursionsLeft) {
+    if (recursionsLeft == 0) {
+        t.move(distance);
+    } else {
+        distance /= 2.0f;
+        --recursionsLeft;
+
+        // Recursive left turn
+        sierpinskiArrowhead(t, distance, recursionsLeft);
+        t.rotate(M_PI / 3);  // Rotate 60° (π/3 radians)
+        t.draw(distance);
+
+        // Recursive right turn
+        sierpinskiArrowhead(t, distance, recursionsLeft);
+        t.rotate(-M_PI / 3);  // Rotate -60° (-π/3 radians)
+        t.draw(distance);
+
+        // Recursive left turn
+        sierpinskiArrowhead(t, distance, recursionsLeft);
+        t.draw(distance);
+    }
+}
+*/
+void curve(Turtle t, float distance, int recursionsLeft, double angle) {
+    if (recursionsLeft == 0) {
+        t.draw(distance);
+    }
+    else {
+        distance /= 2.0f;
+        --recursionsLeft;
+        glColor3f(1, 0, 0);
+
+        t.rotate(-angle);
+        curve(t, distance, recursionsLeft, -angle);
+        t.move(distance);
+
+        glColor3f(0, 1, 0);
+        t.rotate(angle);
+        curve(t, distance, recursionsLeft, angle);
+        t.move(distance);
+
+        glColor3f(0, 0, 1);
+        t.rotate(angle);
+        curve(t, distance, recursionsLeft, -angle);
+        //t.move(distance);
+        t.rotate(-angle);
+    }
+}
+void Display4() {
+    // Setează culoarea pentru fractal
+    glColor3f(1, 0, 0); // Culoare roșie
+    drawRecursionLevel(); // Afișează nivelul curent de recursiune
+
+    Turtle t = Turtle(-0.9f, -0.9f);
+    //hexLineFractal(t, 0.25f, g_recursionCurrent);
+    curve(t, 1.8f, g_recursionCurrent, -pi / 3);
 }
 
 template <typename FloatType>
@@ -338,7 +484,7 @@ protected:
     // overrode ... overriden ? the test function to 'freeze' the a and b
     virtual inline int test(std::complex<FloatType> z, std::complex<FloatType> c, double maxRadius = 2, int maxIteration = 50) {
         /*
-          Compute the Julia-Fatou set in a point in 4D (x, y, a, b). Return the iterations *left*
+          Compute the Julia-Fatou set in a point in 4D (x, y, a, b). Return the iterations left
           upon radius breach. So, a return value of 0 means estimated-divergence, other values
           mean speed of estimated convergence.
         */
@@ -387,13 +533,13 @@ public:
                 if (0 == iterations) {
                     glColor3f(1, 0, 0);
                     glVertex2d(h, v);
-				}
+                }
                 else {
                     int iterationsLeft = m_maxIteration - iterations;
 
-                    float red = (iterationsLeft * 30) % 256; 
-                    float green = (iterationsLeft * 2) % 256;  
-                    float blue = (iterationsLeft * 12) % 256; 
+                    float red = (iterationsLeft * 30) % 256;
+                    float green = (iterationsLeft * 2) % 256;
+                    float blue = (iterationsLeft * 12) % 256;
 
                     glColor3f(red / 255.0f, green / 255.0f, blue / 255.0f);
                     glVertex2d(h, v);
@@ -419,7 +565,7 @@ class MB : public JF<FloatType> {
 protected:
     virtual inline int test(std::complex<FloatType> z, std::complex<FloatType> c, double maxRadius = 2, int maxIteration = 50) {
         /*
-          Compute the Julia-Fatou set in a point in 4D (x, y, a, b). Return the iterations *left*
+          Compute the Julia-Fatou set in a point in 4D (x, y, a, b). Return the iterations left
           upon radius breach. So, a return value of 0 means estimated-divergence, other values
           mean speed of estimated convergence.
         */
