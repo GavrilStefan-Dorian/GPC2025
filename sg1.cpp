@@ -139,15 +139,11 @@ void Display2() {
    \)
  */
 void Display3() {
-    double xmax = 100;
+    double xmax = 50;
     double ymax = 0;
 
-    glColor3f(1, 0.1, 0.1);
-    glBegin(GL_LINE_STRIP);
-
-    double step = 0.2;
-
-    for (double x = 0; x < xmax; x += step) {
+    
+    for (double x = 0; x <= xmax; x += step) {
         double x1, y1;
 		if (x == 0) {
 			x1 = 0;
@@ -160,7 +156,12 @@ void Display3() {
 		ymax = (ymax < y1) ? y1 : ymax;
     }
 
-    for (double x = 0; x < xmax; x += step) {
+    xmax += 0.25;
+    ymax += 0.25;
+    
+    glColor3f(1, 0.1, 0.1);
+    glBegin(GL_LINE_STRIP);
+    for (double x = 0; x <= xmax; x += step) {
         double x1, y1;
         if (x == 0) {
             x1 = 0;
@@ -309,7 +310,7 @@ double y8(double a, double b, double t) {
 }
 void Display8() {
     double a = 0.02;
-    plot(&x8, &y8, a, 0, 0 + step, 17, step);
+    plot(&x8, &y8, a, 0, 19 + step, 23, step, false);
 }
 
 /*
@@ -342,7 +343,8 @@ double x10(double a, double b, double t) {
 double y10(double a, double b, double t) {
 	return a * tan(t) / (4 * cos(t) * cos(t) - 3);
 }
-void plot10(double (*x)(double, double, double), double (*y)(double, double, double), double a, double b, double intervalStart, double intervalEnd, double step = 0.05, double scaleX = 1, double scaleY = 1, GLint primitive = GL_LINE_STRIP) {
+
+void plot10(double (*x)(double, double, double), double (*y)(double, double, double), double a, double b, double intervalStart, double intervalEnd, double step = 0.001) {
     double xmin = x(a, b, intervalStart);
     double xmax = xmin;
     double ymax = y(a, b, intervalStart);
@@ -350,12 +352,15 @@ void plot10(double (*x)(double, double, double), double (*y)(double, double, dou
 
 
     for (double t = intervalStart; t <= intervalEnd; t += step) {
-		if (t == -pi / 6 || t == pi / 6)
-			continue;
+        if (t == pi / 6 || t == -pi / 6)
+            continue;
 
-        double x1, y1;
+        double x1 = x(a, b, t);
+        double y1 = y(a, b, t);
+
         x1 = x(a, b, t);
         y1 = y(a, b, t);
+
         ymin = (ymin > y1) ? y1 : ymin;
         ymax = (ymax < y1) ? y1 : ymax;
 
@@ -369,28 +374,47 @@ void plot10(double (*x)(double, double, double), double (*y)(double, double, dou
     xmax += 0.05;
     ymax += 0.05;
 
-    glColor3f(1, 0, 0);
+	glColor3f(1, 0, 0);
     glBegin(GL_LINE_STRIP);
     for (double t = intervalStart; t <= intervalEnd; t += step) {
-        if (t == -pi / 6 || t == pi / 6)
+        if (t == pi / 6 || t == -pi / 6)
             continue;
-        
-        double x1, y1;
-        x1 = x(a, b, t) / xmax;
-        y1 = y(a, b, t) / ymax;
 
-        if (y1 < 0)
-            glColor3f(0.8, 0.1, 0.4);
-        else
-            glColor3f(0.4, 0.1, 0.4);
+        double x1 = x(a, b, t) / xmax;
+        double y1 = y(a, b, t) / ymax;
+
         glVertex2d(x1, y1);
     }
+    glEnd();
+
+	double redHue = 0.0;
+
+    glBegin(GL_TRIANGLES);
+    for (double t = intervalStart; t <= intervalEnd; t += 2 * step) {
+        if (t == pi / 6 || t == -pi / 6)
+            continue;
+
+        double x1 = x(a, b, t) / xmax;
+        double y1 = y(a, b, t) / ymax;
+
+		glColor3f(redHue, 0, 0);
+        redHue += intervalEnd / t;
+
+        glVertex2d(-0.95, 0.95);
+        glVertex2d(x1, y1);
+
+		x1 = x(a, b, t + step) / xmax;
+		y1 = y(a, b, t + step) / ymax;
+
+		glVertex2d(x1, y1);
+    }
+
     glEnd();
 }
 
 void Display10() {
-	double a = 0.2;
-	plot10(&x10, &y10, a, 0, -pi / 2 + step, pi / 2 - step, step);
+    double a = 0.2;
+    plot10(&x10, &y10, a, 0, -pi / 2 + step, - pi / 6 - step, 0.0475);
 }
 
 void init(void) {
