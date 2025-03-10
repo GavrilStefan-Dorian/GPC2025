@@ -140,15 +140,34 @@ void Display2() {
  */
 void Display3() {
     double xmax = 100;
-    double ymax = 0.5; 
+    double ymax = 0;
 
     glColor3f(1, 0.1, 0.1);
     glBegin(GL_LINE_STRIP);
-    glVertex2d(0, 1);
-    for (double x = 1; x < xmax; x += step) {
+
+    for (double x = 0; x < xmax; x += step) {
         double x1, y1;
-        x1 = x / xmax;
-		y1 = ((ceil(x) - x) < (x - floor(x))) ? (ceil(x) - x) / (x * ymax) : (x - floor(x)) / (x * ymax);
+		if (x == 0) {
+			x1 = 0;
+			y1 = 1;
+		}
+        else {
+            x1 = x / xmax;
+            y1 = ((ceil(x) - x) < (x - floor(x))) ? (ceil(x) - x) / x : (x - floor(x)) / x;
+        }
+		ymax = (ymax < y1) ? y1 : ymax;
+    }
+
+    for (double x = 0; x < xmax; x += step) {
+        double x1, y1;
+        if (x == 0) {
+            x1 = 0;
+            y1 = 1;
+        }
+        else {
+            x1 = x / xmax;
+            y1 = ((ceil(x) - x) < (x - floor(x))) ? (ceil(x) - x) / x : (x - floor(x)) / x;
+        }
         glVertex2d(x1, y1);
     }
     glEnd();
@@ -163,6 +182,36 @@ void plot(double (*x)(double, double, double), double (*y)(double, double, doubl
   For this plot, \(a = 0.3, \; b = 0.2\) .
 */
 void Display4() {
+	double a = 0.3, b = 0.2;
+
+    double t = -pi;
+    double xmin = 2 * (a * cos(t) + b) * cos(t);
+    double xmax = xmin;
+    double ymax = 2 * (a * cos(t) + b) * sin(t);
+    double ymin = ymax;
+
+
+    for (double t = -pi; t < pi; t += step) {
+        double x1, y1;
+        x1 = 2 * (a * cos(t) + b) * cos(t) / xmax;
+        y1 = 2 * (a * cos(t) + b) * sin(t) / ymax;
+		ymin = (ymin > y1) ? y1 : ymin;
+		ymax = (ymax < y1) ? y1 : ymax;
+
+		xmin = (xmin > x1) ? x1 : xmin;
+		xmax = (xmax < x1) ? x1 : xmax;
+    }
+
+
+	glColor3f(1, 0.1, 0.1);
+	glBegin(GL_LINE_STRIP);
+	for (double t = -pi; t < pi; t += step) {
+		double x1, y1;
+		x1 = 2 * (a * cos(t) + b) * cos(t) / xmax;
+		y1 = 2 * (a * cos(t) + b) * sin(t) / ymax;
+		glVertex2d(x1, y1);
+	}
+	glEnd();
 }
 
 /*

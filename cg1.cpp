@@ -381,58 +381,6 @@ void hexLineFractal(Turtle t, float distance, int recursionsLeft = 1) {
 
 }
 
-//void sierpinskiArrowhead(Turtle& t, float distance, int recursionsLeft, bool turnLeft = true) {
-//    if (recursionsLeft > 0) {
-//        --recursionsLeft;
-//        distance /= 2;
-//
-//        // Dacă trebuie să virăm la stânga, folosim +60° și -60°
-//        if (turnLeft) {
-//            sierpinskiArrowhead(t, distance, recursionsLeft, true);
-//            t.rotate(pi / 3);  // Rotim la stânga 60°
-//            sierpinskiArrowhead(t, distance, recursionsLeft, false);
-//            t.rotate(pi / 3);  // Rotim la stânga 60°
-//            sierpinskiArrowhead(t, distance, recursionsLeft, true);
-//        }
-//        // Dacă trebuie să virăm la dreapta, folosim -60° și +60°
-//        else {
-//            sierpinskiArrowhead(t, distance, recursionsLeft, false);
-//            t.rotate(-pi / 3);  // Rotim la dreapta -60°
-//            sierpinskiArrowhead(t, distance, recursionsLeft, true);
-//            t.rotate(-pi / 3);  // Rotim la dreapta -60°
-//            sierpinskiArrowhead(t, distance, recursionsLeft, false);
-//        }
-//    }
-//    else {
-//        t.draw(distance);
-//    }
-//}
-
-
-/*
-void sierpinskiArrowhead(Turtle& t, float distance, int recursionsLeft) {
-    if (recursionsLeft == 0) {
-        t.move(distance);
-    } else {
-        distance /= 2.0f;
-        --recursionsLeft;
-
-        // Recursive left turn
-        sierpinskiArrowhead(t, distance, recursionsLeft);
-        t.rotate(M_PI / 3);  // Rotate 60° (π/3 radians)
-        t.draw(distance);
-
-        // Recursive right turn
-        sierpinskiArrowhead(t, distance, recursionsLeft);
-        t.rotate(-M_PI / 3);  // Rotate -60° (-π/3 radians)
-        t.draw(distance);
-
-        // Recursive left turn
-        sierpinskiArrowhead(t, distance, recursionsLeft);
-        t.draw(distance);
-    }
-}
-*/
 void curve(Turtle t, float distance, int recursionsLeft, double angle) {
     if (recursionsLeft == 0) {
         t.draw(distance);
@@ -442,30 +390,28 @@ void curve(Turtle t, float distance, int recursionsLeft, double angle) {
         --recursionsLeft;
         glColor3f(1, 0, 0);
 
-        t.rotate(-angle);
+        t.rotate(angle);
         curve(t, distance, recursionsLeft, -angle);
         t.move(distance);
 
         glColor3f(0, 1, 0);
-        t.rotate(angle);
+        t.rotate(-angle);
         curve(t, distance, recursionsLeft, angle);
         t.move(distance);
 
         glColor3f(0, 0, 1);
-        t.rotate(angle);
-        curve(t, distance, recursionsLeft, -angle);
-        //t.move(distance);
         t.rotate(-angle);
+        curve(t, distance, recursionsLeft, -angle);
+        t.rotate(angle);
     }
 }
 void Display4() {
-    // Setează culoarea pentru fractal
+     //Setează culoarea pentru fractal
     glColor3f(1, 0, 0); // Culoare roșie
     drawRecursionLevel(); // Afișează nivelul curent de recursiune
 
     Turtle t = Turtle(-0.9f, -0.9f);
-    //hexLineFractal(t, 0.25f, g_recursionCurrent);
-    curve(t, 1.8f, g_recursionCurrent, -pi / 3);
+    curve(t, 1.8f, g_recursionCurrent, pi / 3);
 }
 
 template <typename FloatType>
@@ -542,6 +488,7 @@ public:
                     float blue = (iterationsLeft * 12) % 256;
 
                     glColor3f(red / 255.0f, green / 255.0f, blue / 255.0f);
+                    
                     glVertex2d(h, v);
                 }
             }
