@@ -150,7 +150,7 @@ void Display3() {
 			y1 = 1;
 		}
         else {
-            x1 = x / xmax;
+            x1 = x;
             y1 = ((ceil(x) - x) < (x - floor(x))) ? (ceil(x) - x) / x : (x - floor(x)) / x;
         }
 		ymax = (ymax < y1) ? y1 : ymax;
@@ -164,8 +164,8 @@ void Display3() {
     for (double x = 0; x <= xmax; x += step) {
         double x1, y1;
         if (x == 0) {
-            x1 = 0;
-            y1 = 1;
+            x1 = 0 / xmax;
+            y1 = 1 / ymax;
         }
         else {
             x1 = x / xmax;
@@ -373,6 +373,7 @@ void plot10(double (*x)(double, double, double), double (*y)(double, double, dou
 
     xmax += 0.05;
     ymax += 0.05;
+    
 
 	glColor3f(1, 0, 0);
     glBegin(GL_LINE_STRIP);
@@ -414,7 +415,7 @@ void plot10(double (*x)(double, double, double), double (*y)(double, double, dou
 
 void Display10() {
     double a = 0.2;
-    plot10(&x10, &y10, a, 0, -pi / 2 + step, - pi / 6 - step, 0.0475);
+    plot10(&x10, &y10, a, 0, -pi / 2 + step, -pi / 6 - step, 0.0475);
 }
 
 void init(void) {

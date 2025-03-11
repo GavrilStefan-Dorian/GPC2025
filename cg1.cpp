@@ -308,77 +308,9 @@ void Display3() {
     glColor3f(1, 0, 0);
     drawRecursionLevel();
 
-    // !!!!! CHANGES MADE HERE
     Turtle t(0, 0);
     drawSquare(t, 1.85);
     drawCarpetFractal(t, 0.615, g_recursionCurrent);
-}
-
-
-void hexLineFractal(Turtle t, float distance, int recursionsLeft = 1) {
-
-    if (recursionsLeft > 0) {
-        --recursionsLeft;
-        distance = distance / 2;
-
-        if (g_recursionCurrent % 2 == 1) {
-            t.draw(distance);
-
-            t.rotate(pi / 3);
-            hexLineFractal(t, distance, recursionsLeft);
-            t.draw(distance);
-
-            t.rotate(-pi / 3);
-            hexLineFractal(t, distance, recursionsLeft);
-            t.draw(distance);
-
-            t.rotate(-pi / 3);
-            hexLineFractal(t, distance, recursionsLeft);
-            t.draw(distance);
-
-            t.rotate(pi / 3);
-            hexLineFractal(t, distance, recursionsLeft);
-        }
-        else {
-            t.draw(distance);
-
-            t.rotate(pi / 3);
-            hexLineFractal(t, distance, recursionsLeft);
-            t.draw(distance);
-
-            t.rotate(pi / 3);
-            hexLineFractal(t, distance, recursionsLeft);
-            t.draw(distance);
-
-            t.rotate(-pi / 3);
-            hexLineFractal(t, distance, recursionsLeft);
-            t.draw(distance);
-
-            t.rotate(-pi / 3);
-            hexLineFractal(t, distance, recursionsLeft);
-            t.draw(distance);
-
-            t.rotate(-pi / 3);
-            hexLineFractal(t, distance, recursionsLeft);
-            t.draw(distance);
-
-            t.rotate(-pi / 3);
-            hexLineFractal(t, distance, recursionsLeft);
-            t.draw(distance);
-
-            t.rotate(pi / 3);
-            hexLineFractal(t, distance, recursionsLeft);
-            t.draw(distance);
-
-            t.rotate(pi / 3);
-            hexLineFractal(t, distance, recursionsLeft);
-            t.draw(distance);
-        }
-
-    }
-    else
-        t.draw(distance);
-
 }
 
 void curve(Turtle t, float distance, int recursionsLeft, double angle) {
@@ -406,9 +338,8 @@ void curve(Turtle t, float distance, int recursionsLeft, double angle) {
     }
 }
 void Display4() {
-     //Setează culoarea pentru fractal
-    glColor3f(1, 0, 0); // Culoare roșie
-    drawRecursionLevel(); // Afișează nivelul curent de recursiune
+    glColor3f(1, 0, 0); 
+    drawRecursionLevel(); 
 
     Turtle t = Turtle(-0.9f, -0.9f);
     curve(t, 1.8f, g_recursionCurrent, pi / 3);
@@ -427,7 +358,6 @@ protected:
     //exceed the limit.
     int m_maxIteration;
 
-    // overrode ... overriden ? the test function to 'freeze' the a and b
     virtual inline int test(std::complex<FloatType> z, std::complex<FloatType> c, double maxRadius = 2, int maxIteration = 50) {
         /*
           Compute the Julia-Fatou set in a point in 4D (x, y, a, b). Return the iterations left
