@@ -139,7 +139,7 @@ void Display2() {
    \)
  */
 void Display3() {
-    double xmax = 50;
+    double xmax = 25;
     double ymax = 0;
 
     
@@ -156,20 +156,20 @@ void Display3() {
 		ymax = (ymax < y1) ? y1 : ymax;
     }
 
-    xmax += 0.25;
-    ymax += 0.25;
+    double xscale = xmax + 3;
+    double yscale = ymax + 0.25;
     
     glColor3f(1, 0.1, 0.1);
     glBegin(GL_LINE_STRIP);
     for (double x = 0; x <= xmax; x += step) {
         double x1, y1;
         if (x == 0) {
-            x1 = 0 / xmax;
-            y1 = 1 / ymax;
+            x1 = 0 / xscale;
+            y1 = 1 / yscale;
         }
         else {
-            x1 = x / xmax;
-            y1 = ((ceil(x) - x) < (x - floor(x))) ? (ceil(x) - x) / (x * ymax) : (x - floor(x)) / (x * ymax);
+            x1 = x / xscale;
+            y1 = ((ceil(x) - x) < (x - floor(x))) ? (ceil(x) - x) / (x * yscale) : (x - floor(x)) / (x * yscale);
         }
         glVertex2d(x1, y1);
     }
@@ -198,21 +198,21 @@ void plot(double (*x)(double, double, double), double (*y)(double, double, doubl
     xmax = (fabs(xmax) > fabs(xmin)) ? fabs(xmax) : fabs(xmin);
     ymax = (fabs(ymax) > fabs(ymin)) ? fabs(ymax) : fabs(ymin);
 
-    xmax += 0.05;
-    ymax += 0.05;
+    scaleX += xmax;
+    scaleY += ymax;
 
     if (!normaliseBoth)
     {
-        xmax = (xmax > ymax) ? xmax : ymax;
-        ymax = xmax;
+        scaleX = (scaleX > scaleY) ? scaleX : scaleY;
+        scaleY = scaleX;
     }
 
     glColor3f(1, 0, 0);
     glBegin(GL_LINE_STRIP);
     for (double t = intervalStart; t <= intervalEnd; t += step) {
         double x1, y1;
-        x1 = x(a, b, t) / xmax;
-        y1 = y(a, b, t) / ymax;
+        x1 = x(a, b, t) / scaleX;
+        y1 = y(a, b, t) / scaleY;
 
         if (y1 < 0)
             glColor3f(0.8, 0.1, 0.4);
@@ -238,7 +238,7 @@ double y4(double a, double b, double t) {
 
 void Display4() {
 	double a = 0.3, b = 0.2;
-	plot(&x4, &y4, a, b, -pi + 0.0005, pi - 0.0005, 0.0005);
+	plot(&x4, &y4, a, b, -pi + 0.0005, pi - 0.0005, 0.0005, true, 0.05, 0.05);
 }
 
 /*
@@ -256,7 +256,7 @@ double y5(double a, double b, double t) {
 }
 void Display5() {
     double a = 0.1, b = 0.2;
-    plot(&x5, &y5, a, b, -9, 9, step, false);
+    plot(&x5, &y5, a, b, -9, 9, step, false, 0.05, 0.05);
 }
 
 /*
@@ -275,7 +275,7 @@ double y6(double a, double b, double t) {
 }
 void Display6() {
     double a = 0.1, b = 0.3;
-	plot(&x6, &y6, a, b, 0, 2 * pi, step);
+	plot(&x6, &y6, a, b, 0, 2 * pi, step, true, 0.05, 0.05);
 }
 
 /*
@@ -294,7 +294,7 @@ double y7(double a, double b, double t) {
 }
 void Display7() {
     double a = 0.1, b = 0.3;
-	plot(&x7, &y7, a, b, 0, 2 * pi, step);
+	plot(&x7, &y7, a, b, 0, 2 * pi, step, true, 0.05, 0.05);
 }
 
 /*
@@ -310,7 +310,7 @@ double y8(double a, double b, double t) {
 }
 void Display8() {
     double a = 0.02;
-    plot(&x8, &y8, a, 0, 19 + step, 23, step, false);
+    plot(&x8, &y8, a, 0, 0, 4, step, false, 0.125, 0.125);
 }
 
 /*
@@ -326,7 +326,7 @@ double y9(double a, double b, double t) {
 }
 void Display9() {
     double a = 10;
-	plot(&x9, &y9, a, 0, 0, 2 * pi, 0.01);
+	plot(&x9, &y9, a, 0, 0, 2 * pi, 0.01, true, 0.05, 0.05);
 }
 
 /*
@@ -344,7 +344,7 @@ double y10(double a, double b, double t) {
 	return a * tan(t) / (4 * cos(t) * cos(t) - 3);
 }
 
-void plot10(double (*x)(double, double, double), double (*y)(double, double, double), double a, double b, double intervalStart, double intervalEnd, double step = 0.001) {
+void plot10(double (*x)(double, double, double), double (*y)(double, double, double), double a, double b, double intervalStart, double intervalEnd, double step = 0.001, double scaleX = 1, double scaleY = 1) {
     double xmin = x(a, b, intervalStart);
     double xmax = xmin;
     double ymax = y(a, b, intervalStart);
@@ -371,8 +371,8 @@ void plot10(double (*x)(double, double, double), double (*y)(double, double, dou
     xmax = (fabs(xmax) > fabs(xmin)) ? fabs(xmax) : fabs(xmin);
     ymax = (fabs(ymax) > fabs(ymin)) ? fabs(ymax) : fabs(ymin);
 
-    xmax += 0.05;
-    ymax += 0.05;
+    scaleX += xmax;
+    scaleY += ymax;
     
 
 	glColor3f(1, 0, 0);
@@ -381,8 +381,8 @@ void plot10(double (*x)(double, double, double), double (*y)(double, double, dou
         if (t == pi / 6 || t == -pi / 6)
             continue;
 
-        double x1 = x(a, b, t) / xmax;
-        double y1 = y(a, b, t) / ymax;
+        double x1 = x(a, b, t) / scaleX;
+        double y1 = y(a, b, t) / scaleY;
 
         glVertex2d(x1, y1);
     }
@@ -395,8 +395,8 @@ void plot10(double (*x)(double, double, double), double (*y)(double, double, dou
         if (t == pi / 6 || t == -pi / 6)
             continue;
 
-        double x1 = x(a, b, t) / xmax;
-        double y1 = y(a, b, t) / ymax;
+        double x1 = x(a, b, t) / scaleX;
+        double y1 = y(a, b, t) / scaleY;
 
 		glColor3f(redHue, 0, 0);
         redHue += intervalEnd / t;
@@ -404,8 +404,8 @@ void plot10(double (*x)(double, double, double), double (*y)(double, double, dou
         glVertex2d(-0.95, 0.95);
         glVertex2d(x1, y1);
 
-		x1 = x(a, b, t + step) / xmax;
-		y1 = y(a, b, t + step) / ymax;
+		x1 = x(a, b, t + step) / scaleX;
+		y1 = y(a, b, t + step) / scaleY;
 
 		glVertex2d(x1, y1);
     }
@@ -415,7 +415,7 @@ void plot10(double (*x)(double, double, double), double (*y)(double, double, dou
 
 void Display10() {
     double a = 0.2;
-    plot10(&x10, &y10, a, 0, -pi / 2 + step, -pi / 6 - step, 0.0475);
+    plot10(&x10, &y10, a, 0, -pi / 2 + step, -pi / 6 - step, 0.0475, 0.05, 0.05);
 }
 
 void init(void) {
