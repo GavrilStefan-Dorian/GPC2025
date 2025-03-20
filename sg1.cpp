@@ -17,8 +17,8 @@ double pi = halfCircle; // TAU / 2 = PI
 //How often should the drawing algorithm sample the function.
 double step = 0.05;
 
-
-int defaultW = 1000, defaultH = 1000;
+// changed to fit the whole window on the screen
+int defaultW = 800, defaultH = 800;
 
 unsigned char prevKey;
 
@@ -139,6 +139,8 @@ void Display2() {
    \)
  */
 void Display3() {
+    // double xmax = 100;
+    // reduced to 25 to achieve the spread-out shapes ( less bunched together )
     double xmax = 25;
     double ymax = 0;
 
@@ -156,6 +158,7 @@ void Display3() {
 		ymax = (ymax < y1) ? y1 : ymax;
     }
 
+    // values that gave good-looking window 'margins/paddings'
     double xscale = xmax + 3;
     double yscale = ymax + 0.25;
     
@@ -275,7 +278,7 @@ double y6(double a, double b, double t) {
 }
 void Display6() {
     double a = 0.1, b = 0.3;
-	plot(&x6, &y6, a, b, 0, 2 * pi, step, true, 0.05, 0.05);
+	plot(&x6, &y6, a, b, 0, 2 * pi, step, true, 0.05, 0.05, GL_LINE_LOOP);
 }
 
 /*
@@ -415,6 +418,8 @@ void plot10(double (*x)(double, double, double), double (*y)(double, double, dou
 
 void Display10() {
     double a = 0.2;
+    // plot10(&x10, &y10, a, 0, -pi / 2 + step, pi / 2 - step, 0.0475, 0.05, 0.05);
+    // reduced to the (-pi/2, -pi/6) interval to achieve the correct edge drawing
     plot10(&x10, &y10, a, 0, -pi / 2 + step, -pi / 6 - step, 0.0475, 0.05, 0.05);
 }
 

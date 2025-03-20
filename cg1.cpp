@@ -170,11 +170,10 @@ void drawSquare(Turtle t, float distance) {
       (so: draw by moving forward and turning left)
     */
 
-    // !!!!!!! added for easier centering
+    // added for easier centering
     t.rotate(pi + pi / 4);
     t.move(sqrt(2 * distance * distance) / 2);
     t.rotate(-(pi + pi / 4));
-    // !!!!!!! additions end here
 
     t.draw(distance);
 
@@ -292,7 +291,8 @@ void drawCarpetFractal(Turtle t, float distance, int recursionsLeft = 1) {
         }
     }
     else {
-        drawSquare(t, distance);
+		if (recursionsLeft == 1)
+            drawSquare(t, distance);
     }
 }
 void Display2() {
@@ -475,8 +475,11 @@ void Display6() {
 void Display7() {
 }
 
+
 void Display8() {
 }
+
+
 
 void Display9() {
 }
