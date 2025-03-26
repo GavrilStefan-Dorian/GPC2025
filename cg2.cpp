@@ -1,4 +1,4 @@
-/* The GLUT library (GL/glut.h) already includes
+﻿/* The GLUT library (GL/glut.h) already includes
    GL/glu.h and GL/gl.h .
    Functions from each library are prefixed by: gl, glu, or glut.
 
@@ -35,34 +35,70 @@ using namespace std::complex_literals;
 
 float circle = atan(1) * 8; // 2 * PI = TAU
 float halfCircle = atan(1) * 4; // PI
+double tau = circle; // 2 * PI = TAU
+double pi = halfCircle; // TAU / 2 = PI
 
 int g_w = 800, g_h = 800;
 
 unsigned char prevKey;
 
+void swap(int &x, int &y) {
+    x = x ^ y;
+    y = x ^ y;
+    x = x ^ y;
+}
 
 template <typename FloatType>
 class RasterScreen {
 protected:
     FloatType m_width, m_height;
-    int m_pixelSize;
+    int lineThickness;
+    float aspectRatio;
+    float stepx, stepy;
+    int** grid;
+    int rows;
+    int cols;
+    float xmin;
+    float xmax;
+    float ymin;
+    float ymax;
+
 public:
-    RasterScreen(FloatType width, FloatType height, int pixelSize = 1) :
+    RasterScreen(FloatType width, FloatType height, int lineThickness = 3) :
         m_width(width),
         m_height(height),
-        m_pixelSize(pixelSize){
+        lineThickness(lineThickness){
+    }
+
+    void setLineThickness(int thickness = 3) {
+        lineThickness = thickness % 2 ? thickness : thickness - 1;
     }
 
     void drawGrid(int horizontalCells, int verticalCells) {
         glLineWidth(1);
         glColor3f(0.7, 0.7, 0.7);
 
+        grid = new int* [horizontalCells + 1];
+        for (int i = 0; i <= horizontalCells; i++) {
+            grid[i] = new int[verticalCells + 1];
+        }
+
+        for (int i = 0; i <= horizontalCells; i++) {
+            for (int j = 0; j <= verticalCells; j++) {
+                grid[i][j] = 0;
+            }
+        }
+
+        rows = horizontalCells;
+        cols = verticalCells;
+
         float size = 0.9f;
 
-        float stepy = (2.0f * size) / horizontalCells;
-        float stepx = (2.0f * size) / verticalCells;
+        stepy = (2.0f * size) / horizontalCells;
+        stepx = (2.0f * size) / verticalCells;
 
-        float aspectRatio = (float)g_w / (float)g_h;
+        aspectRatio = (float)g_w / (float)g_h;
+
         if (aspectRatio > 1.0f) {
             stepx /= aspectRatio; 
         }
@@ -72,10 +108,10 @@ public:
 
         glBegin(GL_LINES);
 
-        float xmin = -stepx * horizontalCells / 2;
-        float xmax = stepx * horizontalCells / 2;
-        float ymin = -stepy * verticalCells / 2;
-        float ymax = stepy * verticalCells / 2;
+        xmin = -stepx * horizontalCells / 2;
+        xmax = stepx * horizontalCells / 2;
+        ymin = -stepy * verticalCells / 2;
+        ymax = stepy * verticalCells / 2;
 
 
         for (int i = 0; i <= horizontalCells; i++) {
@@ -93,34 +129,325 @@ public:
         glEnd();
     }
 
-    void drawPixel(int x, int y) {
-        glBegin(GL_POINT);
-        glVertex2d()
+    void drawPixel(int x, int y, float radiusx = 0.02, float radiusy = 0.02) {
+        glColor3f(0, 0, 0);
+        int i;
+        int triangleAmount = 70; 
+
+        double twicePi = 2 * pi;
+
+
+        aspectRatio = (float)g_w / (float)g_h;
+
+        if (aspectRatio > 1.0f) {
+             radiusx /= aspectRatio;
+        }
+        else {
+            radiusy *= aspectRatio;
+        }
+    
+        grid[y + cols / 2][x + rows / 2] = 1;
+
+        glBegin(GL_TRIANGLE_FAN);
+        glVertex2f(stepx * x, stepy * y);
+        for (i = 0; i <= triangleAmount; i++) {
+            glVertex2f(
+                stepx * x + (radiusx * cos(i * twicePi / triangleAmount)),
+                stepy * y + (radiusy * sin(i * twicePi / triangleAmount))
+            );
+        }
         glEnd();
     }
 
+    void drawThicknessPixels(int x, int y) {
+        drawPixel(x, y);
+
+        for (int i = 1, j = 1; i < lineThickness; i += 2, j++) {
+            drawPixel(x - j, y);
+            drawPixel(x + j, y);
+            drawPixel(x, y - j);
+            drawPixel(x, y + j);
+        }
+    }
+
+    void drawLineSegmentPrimitive(int x1, int y1, int x2, int y2) {
+        glColor3f(0, 0, 1);
+        glBegin(GL_LINES);
+        glVertex2f(x1 * stepx, y1 * stepy);
+        glVertex2f(x2 * stepx, y2 * stepy);
+        glEnd();
+    }
+
+    void drawCirclePrimitive(int r) {
+        double angle, x, y;
+        glColor3f(0, 0, 1);
+        glLineWidth(2);
+        glBegin(GL_LINE_LOOP);
+        for (int i = 0; i <= 100; i++) {
+            angle = 2 * pi * i / 100;
+            x = r * cos(angle);
+            y = r * sin(angle);
+            glVertex2d(stepx * x, stepy * y);
+        }
+        glEnd();
+        glLineWidth(1);
+    }
+
+    int determineOctave(int x0, int y0, int xn, int yn) {
+        int octave = 1;
+        int dx = abs(x0 - xn);
+        int dy = abs(y0 - yn);
+
+        if (x0 <= xn) {
+            if (y0 <= yn) {
+                if (dx >= dy)
+                    octave = 1;
+                else
+                    octave = 2;
+            }
+            else {
+                if (dx >= dy)
+                    octave = 8;
+                else
+                    octave = 7;
+            }
+        }
+        else {
+            if (y0 <= yn) {
+                if (dx >= dy)
+                    octave = 3;
+                else
+                    octave = 4;
+            }
+            else {
+                if (dx >= dy)
+                    octave = 5;
+                else
+                    octave = 6;
+            }
+        }
+        return octave;
+    }
+
+    void bresenham(int x0, int y0, int xn, int yn) {
+        drawLineSegmentPrimitive(x0, y0, xn, yn);
+
+        int octave = determineOctave(x0, y0, xn, yn);
+
+        std::cout << octave << '\n';
+
+        int ysign = 1;
+        int xsign = 1;
+
+        if (octave == 2) {
+            swap(x0, y0);
+            swap(xn, yn);
+        }
+        if (octave == 3) {
+            swap(x0, xn);
+            swap(y0, yn);
+            ysign = -1;
+        }
+        if (octave == 4) {
+            swap(x0, y0);
+            swap(xn, yn);
+            ysign = -1;
+        }
+        if (octave == 5) {
+            swap(x0, xn);
+            swap(y0, yn);
+
+        }
+        if (octave == 6) {
+            swap(x0, xn);
+            swap(y0, yn);
+            swap(x0, y0);
+            swap(xn, yn);
+        }
+        if (octave == 7) {
+            swap(x0, y0);
+            swap(xn, yn);
+            swap(x0, xn);
+            swap(y0, yn);
+            ysign = -1;
+        }
+        if (octave == 8) {
+            ysign = -1;
+        }
+        const int dx = xsign * (xn - x0);
+        const int dy = ysign * (yn - y0);
+        const int dM = 2 * dy - dx;
+        const int dE = 2 * dy;
+        const int dNE = 2 * (dy - dx);
+        int d = 0;
+        /*
+            Instead of adding d + dM each comparison,
+            we’ ll just add it here.Thus, d becomes
+            the line function through all mid−points.
+            
+        */
+        d += dM;
+        int x = x0;
+        int y = y0;
+
+        if (octave == 2 || octave == 4 || octave == 6 || octave == 7)
+            drawThicknessPixels(y, x);
+        else 
+            drawThicknessPixels(x, y);
+
+        while (x < xn) {
+            ++x;
+            if (d <= 0) {
+                d += dE;
+            }
+            else {
+                d += dNE;
+                y = y + ysign;
+            }
+            if (octave == 2 || octave == 4 || octave == 6 || octave == 7)
+                drawThicknessPixels(y, x);
+            else
+                drawThicknessPixels(x, y);
+        }
+    }
+
+    void bresenhamCircle(int r) {
+        drawCirclePrimitive(r);
+
+        int x = 0, y = r;
+        int d = 1 - r;
+        int de = 3;
+        int dse = -2 * r + 5;
+
+        while (y >= x) {
+            drawPixel(x, y);
+            drawPixel(y, x);
+            drawPixel(y, -x);
+            drawPixel(x, -y);
+            drawPixel(-x, y);
+            drawPixel(-x, -y);
+            drawPixel(-y, -x);
+            drawPixel(-y, x);
+            drawPixel(-x, y);
+            
+            ++x;
+            if (d < 0) {
+                d += de;
+                de += 2;
+                dse += 2;
+            }
+            else {
+                d += dse;
+                de += 2;
+                dse += 4;
+                --y;
+            }
+            //drawPixel(x, y);
+        }
+    }
+    void fillCircle() {
+        int x = 0, y = 0;
+
+        for (; grid[y + cols / 2][x + rows / 2] == 0; x++){
+            for (int y2 = 0; grid[y2 + cols / 2][x + rows / 2] == 0; y2++) {
+                drawPixel(x, y2);
+                drawPixel(x, -y2);
+                drawPixel(-x, y2);
+                drawPixel(-x, -y2);
+            }
+        }
+
+       /* bool firstBorder = false;
+        bool insideCircle = false;
+        bool secondBorder = false;*/
+
+        /*for (int i = 0; i <= rows; i++ ) {
+            insideCircle = false;
+            firstBorder = false;
+            secondBorder = false;
+
+            for (int j = 0; j <= cols; j++) {
+                if (!firstBorder && grid[i][j] == 1)
+                    firstBorder == true;
+                if (!insideCircle && firstBorder && grid[i][j] == 0) 
+                    insideCircle == true;
+                if (!secondBorder && insideCircle && firstBorder && grid[i][j] == 1) {
+                    secondBorder = true;
+                    insideCircle == false;
+                }
+
+                if (insideCircle)
+                    drawPixel(-rows / 2 + j, cols / 2 - i);
+            }
+        }*/
+    }
 };
 
 RasterScreen<double> rs(g_w * 0.95, g_h * 0.95);
 
 void Display1() {
     rs.drawGrid(30, 30);
+    rs.bresenham(13, 2, 7, 11); 
+    rs.bresenham(7, 11, -3, 13); 
+    rs.bresenham(-3, 13, -12, 7);
+    rs.bresenham(-12, 7, -14, -3);
+    rs.bresenham(-14, -3, -8, -12);
+    rs.bresenham(-8, -12, 2, -14);
+    rs.bresenham(2, -14, 11, -8); 
+    rs.bresenham(11, -8, 13, 2);
+
+    /* rs.bresenham(-8, -12, 3, -14);
+    rs.bresenham(-14, -3, -8, -12);
+    rs.bresenham(-12, 7, -14, -3);
+    rs.bresenham(-3, 14, -12, 7);
+    rs.bresenham(8, 12, -3, 14);
+    rs.bresenham(14, 2, 8, 12);
+    rs.bresenham(12, -8, 14, 2);
+    rs.bresenham(3, -14, 12, -8);*/
 }
 
 void Display2() {
-
+    rs.drawGrid(30, 30);
+    rs.bresenhamCircle(13);
 }
 
 void Display3() {
-  
+    rs.drawGrid(30, 30);
+    rs.bresenhamCircle(13);
+    rs.fillCircle();
 }
 
-void Display4() {
+// tester methods for drawing circles
 
+
+void Display4() {
+    glBegin(GL_LINE_LOOP);
+    for (int i = 0; i <= 300; i++) {
+        double angle = 2 * pi * i / 300;
+        double x = 10 * cos(angle);
+        double y = 10 * sin(angle);
+        glVertex2d(x, y);
+    }
+    glEnd();
 }
 
 void Display5() {
+    int i;
+    int triangleAmount = 20;
 
+    GLfloat twicePi = 2.0f * pi;
+
+    int x = 0, y = 0;
+
+    glBegin(GL_TRIANGLE_FAN);
+    glVertex2f(x, y);
+    for (i = 0; i <= triangleAmount; i++) {
+        glVertex2f(
+            x + ((0 + 1) * cos(i * twicePi / triangleAmount)),
+            y + ((0 - 1) * sin(i * twicePi / triangleAmount))
+        );
+    }
+    glEnd();
 }
 
 void Display6() {
