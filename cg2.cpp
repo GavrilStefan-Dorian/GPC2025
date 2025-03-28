@@ -240,8 +240,8 @@ public:
         int xsign = 1;
 
         if (octave == 2) {
-            swap(x0, y0);
-            swap(xn, yn);
+           /* swap(x0, y0);
+            swap(xn, yn);*/
         }
         if (octave == 3) {
             swap(x0, xn);
@@ -249,8 +249,8 @@ public:
             ysign = -1;
         }
         if (octave == 4) {
-            swap(x0, y0);
-            swap(xn, yn);
+            swap(x0, xn);
+            swap(y0, yn);
             ysign = -1;
         }
         if (octave == 5) {
@@ -261,12 +261,12 @@ public:
         if (octave == 6) {
             swap(x0, xn);
             swap(y0, yn);
-            swap(x0, y0);
-            swap(xn, yn);
+            /*swap(x0, y0);
+            swap(xn, yn);*/
         }
         if (octave == 7) {
-            swap(x0, y0);
-            swap(xn, yn);
+           /* swap(x0, y0);
+            swap(xn, yn);*/
             swap(x0, xn);
             swap(y0, yn);
             ysign = -1;
@@ -274,7 +274,7 @@ public:
         if (octave == 8) {
             ysign = -1;
         }
-        const int dx = xsign * (xn - x0);
+        const int dx = (xn - x0);
         const int dy = ysign * (yn - y0);
         const int dM = 2 * dy - dx;
         const int dE = 2 * dy;
@@ -290,46 +290,45 @@ public:
         int x = x0;
         int y = y0;
 
-        if (octave == 2 || octave == 4 || octave == 6 || octave == 7)
-            drawThicknessPixels(y, x);
-        else 
+        if (octave == 2 || octave == 3 || octave == 6 || octave == 7) {
             drawThicknessPixels(x, y);
-
-        while (x < xn) {
-            ++x;
-            if (d <= 0) {
-                d += dE;
-            }
-            else {
-                d += dNE;
+            while (x < xn) {
                 y = y + ysign;
-            }
-            if (octave == 2 || octave == 4 || octave == 6 || octave == 7)
-                drawThicknessPixels(y, x);
-            else
+                if (d <= 0) {
+                    d += dE;
+                }
+                else {
+                    d += dNE;
+                    x++;
+                }
                 drawThicknessPixels(x, y);
+            }
+        }
+        else {
+            drawThicknessPixels(x, y);
+            while (x < xn) {
+                x++;
+                if (d <= 0) {
+                    d += dE;
+                }
+                else {
+                    d += dNE;
+                    y = y + ysign;
+                }
+                drawThicknessPixels(x, y);
+            }
         }
     }
 
-    void bresenhamCircle(int r) {
-        drawCirclePrimitive(r);
-
+    void bresenhamOctave2With6(int r) {
         int x = 0, y = r;
         int d = 1 - r;
         int de = 3;
         int dse = -2 * r + 5;
 
         while (y >= x) {
-            drawPixel(x, y);
-            drawPixel(y, x);
-            drawPixel(y, -x);
-            drawPixel(x, -y);
-            drawPixel(-x, y);
-            drawPixel(-x, -y);
-            drawPixel(-y, -x);
-            drawPixel(-y, x);
-            drawPixel(-x, y);
-            
+            drawPixel(x, y); 
+            drawPixel(-x, -y); 
             ++x;
             if (d < 0) {
                 d += de;
@@ -342,9 +341,92 @@ public:
                 dse += 4;
                 --y;
             }
-            //drawPixel(x, y);
         }
     }
+
+    void bresenhamOctave1With5(int r) {
+        int x = r, y = 0;
+        int d = 1 - r;
+        int dn = 3;
+        int dnv = -2 * r + 5;
+
+        while (y <= x) {
+            drawPixel(x, y);
+            drawPixel(-x, -y); 
+
+            ++y;
+            if (d < 0) {
+                d += dn;
+                dn += 2;
+                dnv += 2;
+            }
+            else {
+                d += dnv;
+                dn += 2;
+                dnv += 4;
+                --x;
+            }
+        }
+    }
+
+    void bresenhamOctave8With4(int r) {
+        int x = r, y = 0;
+        int d = 1 - r;
+        int ds = 3;
+        int dsv = -2 * r + 5;
+
+        while (-y <= x) {
+            drawPixel(x, y);
+            drawPixel(-x, -y);
+
+            --y;
+            if (d < 0) {
+                d += ds;
+                ds += 2;
+                dsv += 2;
+            }
+            else {
+                d += dsv;
+                ds += 2;
+                dsv += 4;
+                --x;
+            }
+        }
+    }
+
+    void bresenhamOctave3With7(int r) {
+        int x = 0, y  = r;
+        int d = 1 - r;
+        int dv = 3;
+        int dsv = -2 * r + 5;
+
+        while (y >= -x) {
+            drawPixel(x, y);
+            drawPixel(-x, -y);
+
+            --x;
+            if (d < 0) {
+                d += dv;
+                dv += 2;
+                dsv += 2;
+            }
+            else {
+                d += dsv;
+                dv += 2;
+                dsv += 4;
+                --y;
+            }
+        }
+    }
+
+    void bresenhamCircle(int r) {
+        drawCirclePrimitive(r);
+        bresenhamOctave1With5(r);
+        bresenhamOctave2With6(r);
+        bresenhamOctave8With4(r);
+        bresenhamOctave3With7(r);
+    }
+
     void fillCircle() {
         int x = 0, y = 0;
 
@@ -356,30 +438,6 @@ public:
                 drawPixel(-x, -y2);
             }
         }
-
-       /* bool firstBorder = false;
-        bool insideCircle = false;
-        bool secondBorder = false;*/
-
-        /*for (int i = 0; i <= rows; i++ ) {
-            insideCircle = false;
-            firstBorder = false;
-            secondBorder = false;
-
-            for (int j = 0; j <= cols; j++) {
-                if (!firstBorder && grid[i][j] == 1)
-                    firstBorder == true;
-                if (!insideCircle && firstBorder && grid[i][j] == 0) 
-                    insideCircle == true;
-                if (!secondBorder && insideCircle && firstBorder && grid[i][j] == 1) {
-                    secondBorder = true;
-                    insideCircle == false;
-                }
-
-                if (insideCircle)
-                    drawPixel(-rows / 2 + j, cols / 2 - i);
-            }
-        }*/
     }
 };
 
@@ -395,25 +453,16 @@ void Display1() {
     rs.bresenham(-8, -12, 2, -14);
     rs.bresenham(2, -14, 11, -8); 
     rs.bresenham(11, -8, 13, 2);
-
-    /* rs.bresenham(-8, -12, 3, -14);
-    rs.bresenham(-14, -3, -8, -12);
-    rs.bresenham(-12, 7, -14, -3);
-    rs.bresenham(-3, 14, -12, 7);
-    rs.bresenham(8, 12, -3, 14);
-    rs.bresenham(14, 2, 8, 12);
-    rs.bresenham(12, -8, 14, 2);
-    rs.bresenham(3, -14, 12, -8);*/
 }
 
 void Display2() {
     rs.drawGrid(30, 30);
-    rs.bresenhamCircle(13);
+    rs.bresenhamCircle(14);
 }
 
 void Display3() {
     rs.drawGrid(30, 30);
-    rs.bresenhamCircle(13);
+    rs.bresenhamCircle(14);
     rs.fillCircle();
 }
 
