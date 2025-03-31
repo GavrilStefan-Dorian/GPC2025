@@ -240,8 +240,8 @@ public:
         int xsign = 1;
 
         if (octave == 2) {
-           /* swap(x0, y0);
-            swap(xn, yn);*/
+            swap(x0, y0);
+            swap(xn, yn);
         }
         if (octave == 3) {
             swap(x0, xn);
@@ -249,8 +249,8 @@ public:
             ysign = -1;
         }
         if (octave == 4) {
-            swap(x0, xn);
-            swap(y0, yn);
+            swap(x0, y0);
+            swap(xn, yn);
             ysign = -1;
         }
         if (octave == 5) {
@@ -261,12 +261,12 @@ public:
         if (octave == 6) {
             swap(x0, xn);
             swap(y0, yn);
-            /*swap(x0, y0);
-            swap(xn, yn);*/
+            swap(x0, y0);
+            swap(xn, yn);
         }
         if (octave == 7) {
-           /* swap(x0, y0);
-            swap(xn, yn);*/
+            swap(x0, y0);
+            swap(xn, yn);
             swap(x0, xn);
             swap(y0, yn);
             ysign = -1;
@@ -290,24 +290,24 @@ public:
         int x = x0;
         int y = y0;
 
-        if (octave == 2 || octave == 3 || octave == 6 || octave == 7) {
-            drawThicknessPixels(x, y);
+        if (octave == 2 || octave == 4 || octave == 6 || octave == 7) {
+            drawThicknessPixels(y, x);
             while (x < xn) {
-                y = y + ysign;
+                ++x;
                 if (d <= 0) {
                     d += dE;
                 }
                 else {
                     d += dNE;
-                    x++;
+                    y = y + ysign;
                 }
-                drawThicknessPixels(x, y);
+                drawThicknessPixels(y, x);
             }
         }
         else {
             drawThicknessPixels(x, y);
             while (x < xn) {
-                x++;
+                ++x;
                 if (d <= 0) {
                     d += dE;
                 }
