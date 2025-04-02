@@ -215,9 +215,9 @@ public:
         else {
             if (y0 <= yn) {
                 if (dx >= dy)
-                    octave = 3;
-                else
                     octave = 4;
+                else
+                    octave = 3;
             }
             else {
                 if (dx >= dy)
@@ -244,13 +244,13 @@ public:
             swap(xn, yn);
         }
         if (octave == 3) {
-            swap(x0, xn);
-            swap(y0, yn);
+            swap(x0, y0);
+            swap(xn, yn);
             ysign = -1;
         }
         if (octave == 4) {
-            swap(x0, y0);
-            swap(xn, yn);
+            swap(x0, xn);
+            swap(y0, yn);
             ysign = -1;
         }
         if (octave == 5) {
@@ -290,7 +290,7 @@ public:
         int x = x0;
         int y = y0;
 
-        if (octave == 2 || octave == 4 || octave == 6 || octave == 7) {
+        if (octave == 2 || octave == 3 || octave == 6 || octave == 7) {
             drawThicknessPixels(y, x);
             while (x < xn) {
                 ++x;
@@ -330,7 +330,7 @@ public:
             drawPixel(x, y); 
             drawPixel(-x, -y); 
             ++x;
-            if (d < 0) {
+            if (d <= 0) {
                 d += de;
                 de += 2;
                 dse += 2;
@@ -355,7 +355,7 @@ public:
             drawPixel(-x, -y); 
 
             ++y;
-            if (d < 0) {
+            if (d <= 0) {
                 d += dn;
                 dn += 2;
                 dnv += 2;
@@ -380,7 +380,7 @@ public:
             drawPixel(-x, -y);
 
             --y;
-            if (d < 0) {
+            if (d <= 0) {
                 d += ds;
                 ds += 2;
                 dsv += 2;
@@ -405,7 +405,7 @@ public:
             drawPixel(-x, -y);
 
             --x;
-            if (d < 0) {
+            if (d <= 0) {
                 d += dv;
                 dv += 2;
                 dsv += 2;
@@ -441,7 +441,8 @@ public:
     }
 };
 
-RasterScreen<double> rs(g_w * 0.95, g_h * 0.95);
+int lineThickness = 1;
+RasterScreen<double> rs(g_w * 0.95, g_h * 0.95, lineThickness);
 
 void Display1() {
     rs.drawGrid(30, 30);
@@ -466,44 +467,21 @@ void Display3() {
     rs.fillCircle();
 }
 
-// tester methods for drawing circles
-
 
 void Display4() {
-    glBegin(GL_LINE_LOOP);
-    for (int i = 0; i <= 300; i++) {
-        double angle = 2 * pi * i / 300;
-        double x = 10 * cos(angle);
-        double y = 10 * sin(angle);
-        glVertex2d(x, y);
-    }
-    glEnd();
 }
 
 void Display5() {
-    int i;
-    int triangleAmount = 20;
-
-    GLfloat twicePi = 2.0f * pi;
-
-    int x = 0, y = 0;
-
-    glBegin(GL_TRIANGLE_FAN);
-    glVertex2f(x, y);
-    for (i = 0; i <= triangleAmount; i++) {
-        glVertex2f(
-            x + ((0 + 1) * cos(i * twicePi / triangleAmount)),
-            y + ((0 - 1) * sin(i * twicePi / triangleAmount))
-        );
-    }
-    glEnd();
 }
 
+// tester for the pixel drawing method
+
 void Display6() {
+    rs.drawGrid(30, 30);
+    rs.drawPixel(0, 0, 0.5, 0.5);
 }
 
 void Display7() {
-
 }
 
 void Display8() {
@@ -565,6 +543,7 @@ void Display(void) {
 
     //Flushes all buffers, and forces the image to be sent to the screen.
     glFlush();
+
 }
 
 /*
